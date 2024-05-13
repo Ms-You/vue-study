@@ -22,7 +22,12 @@ public class ItemService {
 
         itemRepository.findAll()
                 .stream()
-                .map(item -> itemRespList.add(new ItemDTO.ItemResp(item.getName())))
+                .map(item -> itemRespList.add(ItemDTO.ItemResp.builder()
+                        .name(item.getName())
+                        .imgPath(item.getImgPath())
+                        .price(item.getPrice())
+                        .discountRate(item.getDiscountRate())
+                        .build()))
                 .collect(Collectors.toList());
 
         return itemRespList;
