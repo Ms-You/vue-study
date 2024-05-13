@@ -1,28 +1,53 @@
 <template>
   <div class="card shadow-sm">
-    <svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail" preserveAspectRatio="xMidYMid slice" focusable="false"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+    <span class="img" :style="{backgroundImage: `url(${item.imgPath})`}" />
     <div class="card-body">
-      <p class="card-text">{{ item }}</p>
+      <p class="card-text">
+        <span>{{ item.name }} &nbsp;</span>
+        <span class="discount badge bg-danger">
+          {{ item.discountRate }}%
+        </span>
+      </p>
+
       <div class="d-flex justify-content-between align-items-center">
-        <div class="btn-group">
-          <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-          <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-        </div>
-        <small class="text-body-secondary">9 mins</small>
+        <button class="btn btn-primary">구입하기</button>
+        <small class="price text-muted">
+          {{ lib.getNumberFormat(item.price) }}원
+        </small>
+        <small class="real text-danger">
+          {{ lib.getNumberFormat(item.price - (item.price * item.discountRate / 100)) }}원
+        </small>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import lib from '../scripts/lib.js'
+
   export default {
     name: 'Card',
     props: {
-      item: String
+      item: Object
+    },
+    setup() {
+      return {
+        lib
+      }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+.card .img {
+  display: inline-block;
+  width: 100%;
+  height: 250px;
+  background-size: cover;
+  background-position: center;
+}
 
+.card .card-body .price {
+  text-decoration: line-through;
+}
 </style>
