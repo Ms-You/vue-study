@@ -2,6 +2,7 @@ package com.board.api.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,5 +26,13 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
+
+    @Builder
+    private Member(String email, String password, String nickName, RoleType role) {
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.role = role;
+    }
 
 }
