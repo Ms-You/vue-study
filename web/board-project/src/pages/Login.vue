@@ -24,8 +24,8 @@
 <script>
 import axios from 'axios'
 import { reactive } from 'vue'
-import store from '../scripts/store';
 import router from '../scripts/router';
+import store from '../scripts/store'
 
 export default {
   setup() {
@@ -37,11 +37,17 @@ export default {
     })
 
     const submit = () => {
-      axios.post('/api/account/login', state.form).then((res) => {
-        store.commit('setAccount', res.data);
-        sessionStorage.setItem("id", res.data);
-        window.alert('로그인 성공!');
-        router.push({path: '/'});
+      axios.post('/auth/login', state.form).then((res) => {
+        const accessToken = res.headers["authorization"];
+
+        if(accessToken) {
+          localStorage.setItem('accessToken', accessToken);
+          window.alert('로그인 성공!');
+          store.dispatch('initializeAuthentication');
+          router.push({path: '/'});
+        } else {
+          window.alert('로그인 토큰을 받아오는데 실패했습니다.');
+        }
       }).catch(() => {
         window.alert('아이디 혹은 비밀번호가 일치하지 않습니다..');
       })

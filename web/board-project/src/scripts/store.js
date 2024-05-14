@@ -1,19 +1,30 @@
 import { createStore } from 'vuex'
 
-// Create a new store instance.
-const store = createStore({
-  state () {
-    return {
-      account: {
-        id: 0
-      }
-    }
+export default createStore({
+  state: {
+    isAuthenticated: false,
   },
   mutations: {
-    setAccount(state, payload) {
-      state.account.id = payload;
-    }
+    setAuthentication(state, status) {
+      state.isAuthenticated = status;
+    },
+    logout(state) {
+      state.isAuthenticated = false;
+    },
+  },
+  actions: {
+    initializeAuthentication({ commit }) {
+      const accessToken = localStorage.getItem('accessToken');
+
+      if(accessToken) {
+        commit('setAuthentication', true);
+      } else {
+        commit('setAuthentication', false);
+      }
+    },
+    logout({ commit }) {
+      localStorage.removeItem('accessToken');
+      commit('setAuthentication', false);
+    },
   }
 })
-
-export default store;
