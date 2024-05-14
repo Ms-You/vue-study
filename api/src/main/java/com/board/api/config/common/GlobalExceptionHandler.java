@@ -1,4 +1,4 @@
-package com.poje.remind.common;
+package com.board.api.config.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(e.getErrorCode().getStatus())
-                .body(new com.poje.remind.common.ErrorResponse(e.getErrorCode()));
+                .body(new ErrorResponse(e.getErrorCode()));
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.poje.remind.common;
+package com.board.api.config.common;
 
 import lombok.Getter;
 
