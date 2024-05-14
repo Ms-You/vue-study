@@ -1,4 +1,4 @@
-package com.board.api.config.common;
+package com.board.api.config.exception;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

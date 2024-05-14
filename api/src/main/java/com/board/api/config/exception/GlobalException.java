@@ -1,4 +1,4 @@
-package com.board.api.config.common;
+package com.board.api.config.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
