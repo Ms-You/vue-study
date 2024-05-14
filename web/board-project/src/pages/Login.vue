@@ -24,6 +24,8 @@
 <script>
 import axios from 'axios'
 import { reactive } from 'vue'
+import store from '../scripts/store';
+import router from '../scripts/router';
 
 export default {
   setup() {
@@ -36,8 +38,12 @@ export default {
 
     const submit = () => {
       axios.post('/api/account/login', state.form).then((res) => {
-        console.log(res);
-        window.alert('로그인 성공!')
+        store.commit('setAccount', res.data);
+        sessionStorage.setItem("id", res.data);
+        window.alert('로그인 성공!');
+        router.push({path: '/'});
+      }).catch(() => {
+        window.alert('아이디 혹은 비밀번호가 일치하지 않습니다..');
       })
     }
 
