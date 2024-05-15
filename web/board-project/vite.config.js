@@ -8,13 +8,15 @@ export default defineConfig({
     proxy: {
       '/auth': {
         target: 'http://localhost:8088',
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\//, '')
+        changeOrigin: true
       },
       '/api': {
         target: 'http://localhost:8088',
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\//, '')
+        changeOrigin: true
+      },
+      '/member': {
+        target: 'http://localhost:8088',
+        changeOrigin: true
       }
     }
   }

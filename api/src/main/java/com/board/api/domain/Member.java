@@ -2,6 +2,7 @@ package com.board.api.domain;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +18,7 @@ public class Member {
     @Column(length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(length = 20, nullable = false)
+    @Column(length = 100, nullable = false)
     private String password;
 
     @Column(length = 10)
@@ -25,5 +26,19 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private RoleType role;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
+
+    @Builder
+    private Member(String email, String password, String nickName, RoleType role) {
+        this.cart = new Cart();
+        this.email = email;
+        this.password = password;
+        this.nickName = nickName;
+        this.role = role;
+    }
 
 }
