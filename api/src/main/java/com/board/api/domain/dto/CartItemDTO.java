@@ -12,6 +12,7 @@ public class CartItemDTO {
     @AllArgsConstructor
     @Builder
     public static class CartItemResp {
+        private Long id;
         private String name;
         private String imgPath;
         private int price;
