@@ -27,8 +27,14 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private RoleType role;
 
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "cart_id")
+    private Cart cart;
+
+
     @Builder
     private Member(String email, String password, String nickName, RoleType role) {
+        this.cart = new Cart();
         this.email = email;
         this.password = password;
         this.nickName = nickName;
