@@ -23,6 +23,7 @@ public class ItemService {
         itemRepository.findAll()
                 .stream()
                 .map(item -> itemRespList.add(ItemDTO.ItemResp.builder()
+                        .id(item.getId())
                         .name(item.getName())
                         .imgPath(item.getImgPath())
                         .price(item.getPrice())

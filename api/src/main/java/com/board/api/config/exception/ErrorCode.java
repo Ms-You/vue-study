@@ -22,6 +22,9 @@ public enum ErrorCode {
 
     // ITEM
     ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "상품을 찾을 수 없습니다."),
+
+    // CART_ITEM
+    CART_ITEM_NOT_FOUND(HttpStatus.BAD_REQUEST.value(), "장바구니에서 상품을 찾을 수 없습니다."),
     ;
 
     private final int status;

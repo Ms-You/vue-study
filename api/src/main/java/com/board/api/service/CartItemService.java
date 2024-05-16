@@ -54,16 +54,42 @@ public class CartItemService {
      */
     @Transactional(readOnly = true)
     public List<CartItemDTO.CartItemResp> getCartItems() {
-        List<CartItem> cartItemList = cartItemRepository.findAll();
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(() -> {
+            throw new GlobalException(ErrorCode.MEMBER_NOT_FOUND);
+        });
+
+        List<CartItem> cartItemList = cartItemRepository.findAllByCartId(member.getCart().getId());
 
         return cartItemList.stream()
                 .map(cartItem -> CartItemDTO.CartItemResp.builder()
+                        .id(cartItem.getItem().getId())
                         .name(cartItem.getItem().getName())
                         .imgPath(cartItem.getItem().getImgPath())
                         .price(cartItem.getItem().getPrice())
                         .discountRate(cartItem.getItem().getDiscountRate())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * 장바구니에 속한 상품 삭제
+     * @param itemId
+     */
+    @Transactional
+    public void deleteCartItem(Long itemId) {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(() -> {
+            throw new GlobalException(ErrorCode.MEMBER_NOT_FOUND);
+        });
+
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> {
+            throw new GlobalException(ErrorCode.ITEM_NOT_FOUND);
+        });
+
+        CartItem cartItem = cartItemRepository.findByCartIdAndItemId(member.getCart().getId(), item.getId()).orElseThrow(() -> {
+            throw new GlobalException(ErrorCode.CART_ITEM_NOT_FOUND);
+        });
+
+        cartItemRepository.delete(cartItem);
     }
 
 }

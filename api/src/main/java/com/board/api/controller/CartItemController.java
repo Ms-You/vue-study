@@ -6,10 +6,7 @@ import com.board.api.service.CartItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -41,4 +38,15 @@ public class CartItemController {
         return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "상품 목록 반환", cartItemRespList));
     }
 
+    /**
+     * 장바구니에 속한 상품 삭제
+     * @param itemId
+     * @return
+     */
+    @DeleteMapping("/member/cart/item/{itemId}")
+    public ResponseEntity<BasicResponse> deleteCartItem(@PathVariable Long itemId) {
+        cartItemService.deleteCartItem(itemId);
+
+        return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "상품이 삭제되었습니다."));
+    }
 }

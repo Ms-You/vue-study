@@ -108,15 +108,4 @@ public class MemberService {
         );
     }
 
-//    @Transactional
-//    public Long signIn(MemberDTO.LoginReq loginReq) {
-//        Optional<Member> memberOptional = memberRepository.findByEmail(loginReq.getEmail());
-//
-//        if(memberOptional.isPresent()) {
-//            return memberOptional.get().getId();
-//        }
-//
-//        return 0L;
-//    }
-
 }

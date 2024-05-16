@@ -79,16 +79,4 @@ public class AuthController {
         return ResponseEntity.ok(new BasicResponse(HttpStatus.OK.value(), "로그아웃 되었습니다."));
     }
 
-//    // Vue 로그인 시 axios 호출 테스트
-//    @PostMapping("/api/account/login")
-//    public Long signIn(@RequestBody MemberDTO.LoginReq loginReq) {
-//        Long id = memberService.signIn(loginReq);
-//        if(id == 0L) {
-//            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-//        }
-//
-//        return id;
-//    }
-
-
 }

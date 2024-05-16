@@ -12,6 +12,7 @@ public class ItemDTO {
     @AllArgsConstructor
     @Builder
     public static class ItemResp {
+        private Long id;
         private String name;
         private String imgPath;
         private int price;
