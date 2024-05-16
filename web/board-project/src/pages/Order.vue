@@ -81,6 +81,7 @@
 <script>
 import { reactive, computed } from 'vue';
 import axios from '../axios'
+import router from '../scripts/router'
 import lib from '../scripts/lib'
 
 export default {
@@ -111,7 +112,8 @@ export default {
       }));
 
       axios.post('/member/order', state.form).then((res) => {
-        console.log('success');
+        window.alert(res.data.message);
+        router.push({path: '/orders'});
       })
     }
 
