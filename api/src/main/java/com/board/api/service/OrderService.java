@@ -7,10 +7,7 @@ import com.board.api.domain.Member;
 import com.board.api.domain.Order;
 import com.board.api.domain.OrderItem;
 import com.board.api.domain.dto.OrderDTO;
-import com.board.api.repository.ItemRepository;
-import com.board.api.repository.MemberRepository;
-import com.board.api.repository.OrderItemRepository;
-import com.board.api.repository.OrderRepository;
+import com.board.api.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final MemberRepository memberRepository;
+    private final CartItemRepository cartItemRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
@@ -54,6 +52,8 @@ public class OrderService {
                         .order(order)
                         .item(item)
                         .build()));
+
+        cartItemRepository.deleteByCartId(member.getCart().getId());
     }
 
     /**
