@@ -54,7 +54,11 @@ public class CartItemService {
      */
     @Transactional(readOnly = true)
     public List<CartItemDTO.CartItemResp> getCartItems() {
-        List<CartItem> cartItemList = cartItemRepository.findAll();
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(() -> {
+            throw new GlobalException(ErrorCode.MEMBER_NOT_FOUND);
+        });
+
+        List<CartItem> cartItemList = cartItemRepository.findAllByCartId(member.getCart().getId());
 
         return cartItemList.stream()
                 .map(cartItem -> CartItemDTO.CartItemResp.builder()
