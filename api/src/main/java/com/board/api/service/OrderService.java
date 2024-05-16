@@ -57,11 +57,11 @@ public class OrderService {
     }
 
     /**
-     * 주문 정보 조회
+     * 주문 내역 조회
      * @return
      */
     @Transactional(readOnly = true)
-    public OrderDTO.OrderResp getOrder() {
+    public List<OrderDTO.OrderResp> getOrder() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(() -> {
             throw new GlobalException(ErrorCode.MEMBER_NOT_FOUND);
         });
@@ -75,14 +75,15 @@ public class OrderService {
                         .address(order.getAddress())
                         .payMethod(order.getPayMethod())
                         .cardNumber(order.getCardNumber())
-                        .orderItemRespList(order.getOrderItemList().stream()
+                        .orderItems(order.getOrderItemList().stream()
                                 .map(orderItem -> OrderDTO.OrderItemResp.builder()
+                                        .id(orderItem.getItem().getId())
                                         .name(orderItem.getItem().getName())
                                         .price(orderItem.getItem().getPrice())
                                         .build())
                                 .collect(Collectors.toList()))
                         .build())
-                .findFirst().orElse(null);
+                .collect(Collectors.toList());
     }
 
 }

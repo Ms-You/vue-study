@@ -35,7 +35,7 @@ public class OrderDTO {
         private String address;
         private String payMethod;
         private String cardNumber;
-        private List<OrderItemResp> orderItemRespList;
+        private List<OrderItemResp> orderItems;
     }
 
     @Getter
@@ -43,6 +43,7 @@ public class OrderDTO {
     @AllArgsConstructor
     @Builder
     public static class OrderItemResp {
+        private Long id;
         private String name;
         private int price;
     }
