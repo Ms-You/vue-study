@@ -76,12 +76,37 @@ button.ghost {
   text-align: center;
 }
 
+.email-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 75%;
+}
+
+.duplicate-check {
+  border: 1px solid #FF416C;
+  background-color: #FF416C;
+}
+
+.text-available {
+  color: rgb(51, 51, 253);
+}
+
+.text-unusable {
+  color: #FF4B2B;
+}
+
 input {
   background-color: #eee;
   border: none;
   padding: 12px 15px;
   margin: 8px 0;
-  width: 100%;
+  width: 75%;
+}
+
+.email {
+  flex-grow: 1;
+  margin-right: 10px;
 }
 
 .container {
