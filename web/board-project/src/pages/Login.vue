@@ -11,18 +11,19 @@
         <small v-if="registerState.message" :class="{'text-available': registerState.messageType === 'available', 'text-unusable': registerState.messageType === 'unusable'}">{{ registerState.message }}</small>
         <input type="text" class="nickName" placeholder="Nickname" v-model="registerState.form.nickName" />
         <input type="password" class="password" placeholder="Password" v-model="registerState.form.password" />
-        <input type="password" class="password-confirm" placeholder="Confirm your password"  v-model="registerState.form.passwordConfirm" />
-        <button>Sign Up</button>
+        <input type="password" class="password-confirm" placeholder="Confirm your password" v-model="registerState.form.passwordConfirm" />
+        <small v-if="!isCorrect" class="text-unusable">비밀번호가 일치하지 않습니다.</small>
+        <button @click="register()">Sign Up</button>
       </div>
     </div>
     <div class="form-container sign-in-container">
       <div class="sign-form">
         <h1>Sign in</h1>
         <span>use your account</span>
-        <input type="email" placeholder="Email" @keyup.enter="submit()" v-model="loginState.form.email" />
-        <input type="password" placeholder="Password" @keyup.enter="submit()" v-model="loginState.form.password" />
+        <input type="email" placeholder="Email" @keyup.enter="login()" v-model="loginState.form.email" />
+        <input type="password" placeholder="Password" @keyup.enter="login()" v-model="loginState.form.password" />
         <a href="#">Forgot your password?</a>
-        <button @click="submit()">Sign In</button>
+        <button @click="login()">Sign In</button>
       </div>
     </div>
     <div class="overlay-container">
@@ -49,7 +50,8 @@ import store from '../scripts/store'
 
 export default {
   setup() {
-    const isActive=  ref(false);
+    const isActive = ref(false);
+    const isCorrect = ref(true);
 
     /**
      * 로그인, 회원가입 좌우 변경 이벤트
@@ -58,6 +60,14 @@ export default {
     const activePanel = (status) => {
       isActive.value = status;
     };
+
+    /**
+     * 비밀번호 일치 여부 확인
+     * @param status 
+     */
+    const correctPassword = (status) => {
+      isCorrect.value = status;
+    }
 
     /**
      * 회원가입을 위한 양식
@@ -102,7 +112,45 @@ export default {
       });
     };
 
-    const submit = () => {
+    /**
+     * 회원가입 api 호출
+     */
+    const register = () => {
+      correctPassword(true);
+      const isFormFilled = registerState.form.email && registerState.form.nickName 
+      && registerState.form.password && registerState.form.passwordConfirm;
+
+      if(!isFormFilled) {
+        window.alert('모든 필드를 채워주세요.')
+        return;
+      }
+
+      if(registerState.form.password !== registerState.form.passwordConfirm) {
+        correctPassword(false);
+        return;
+      } else {
+        axios.post('auth', registerState.form).then((res) => {
+          correctPassword(true);
+          window.alert('회원가입이 완료되었습니다.');
+          registerState.messageType = "";
+          registerState.message = "";
+          activePanel(false);
+        }).catch((error) => {
+          if(error.response && error.response.data) {
+            registerState.message = error.response.data.message;
+            registerState.messageType = 'unusable';
+          } else {
+            registerState.message = '사용할 수 없는 이메일입니다.';
+            registerState.messageType = 'unusable';
+          }
+        })
+      }
+    };
+
+    /**
+     * 로그인 api 호출
+     */
+    const login = () => {
       axios.post('/auth/login', loginState.form).then((res) => {
         const accessToken = res.headers["authorization"];
 
@@ -124,8 +172,11 @@ export default {
       loginState,
       isActive,
       activePanel,
+      isCorrect,
+      correctPassword,
       emailCheck,
-      submit
+      register,
+      login
     }
   }
 }
