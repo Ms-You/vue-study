@@ -1,24 +1,44 @@
 <template>
-  <div class="form-signin w-100 m-auto">
-    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
-
-    <div class="form-floating">
-      <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com" 
-      @keyup.enter="submit()" v-model="state.form.email">
-      <label for="floatingInput">Email address</label>
+  <div :class="['container', { 'right-panel-active': isActive }]" id="container">
+    <div class="form-container sign-up-container">
+      <div class="sign-form">
+        <h1>Create Account</h1>
+        <span>use your email for registration</span>
+        <input type="text" placeholder="Nickname" />
+        <input type="email" placeholder="Email" />
+        <input type="password" placeholder="Password" />
+        <button>Sign Up</button>
+      </div>
     </div>
-    <div class="form-floating">
-      <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
-      @keyup.enter="submit()" v-model="state.form.password">
-      <label for="floatingPassword">Password</label>
+    <div class="form-container sign-in-container">
+      <div class="sign-form">
+        <h1>Sign in</h1>
+        <span>use your account</span>
+        <input type="email" placeholder="Email" @keyup.enter="submit()" v-model="state.form.email" />
+        <input type="password" placeholder="Password" @keyup.enter="submit()" v-model="state.form.password" />
+        <a href="#">Forgot your password?</a>
+        <button @click="submit()">Sign In</button>
+      </div>
     </div>
-    <button class="btn btn-primary w-100 py-2" @click="submit()">Sign in</button>
-    <p class="mt-5 mb-3 text-body-secondary">&copy; 2017–2024</p>
+    <div class="overlay-container">
+      <div class="overlay">
+        <div class="overlay-panel overlay-left">
+          <h1>Welcome Back!</h1>
+          <p>To keep connected with us please login with your personal info</p>
+          <button class="ghost" id="signIn" @click="activePanel(false)">Sign In</button>
+        </div>
+        <div class="overlay-panel overlay-right">
+          <h1>Hello, Friend!</h1>
+          <p>Enter your personal details and use gallery</p>
+          <button class="ghost" id="signUp" @click="activePanel(true)">Sign Up</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 <script>
 import axios from 'axios'
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import router from '../scripts/router';
 import store from '../scripts/store'
 
@@ -30,6 +50,16 @@ export default {
         password: "",
       }
     })
+
+    const isActive=  ref(false);
+
+    /**
+     * 로그인, 회원가입 좌우 변경 이벤트
+     * @param status 
+     */
+    const activePanel = (status) => {
+      isActive.value = status;
+    }
 
     const submit = () => {
       axios.post('/auth/login', state.form).then((res) => {
@@ -50,30 +80,14 @@ export default {
 
     return {
       state,
+      isActive,
+      activePanel,
       submit
     }
   }
 }
+
 </script>
 <style scoped>
-.form-signin {
-  max-width: 330px;
-  padding: 1rem;
-}
-
-.form-signin .form-floating:focus-within {
-  z-index: 2;
-}
-
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
+  @import '../assets/login.css';
 </style>
