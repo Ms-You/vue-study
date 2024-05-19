@@ -23,7 +23,7 @@
 
         <div class="dropdown text-end" v-if="isAuthenticated">
           <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="" alt="프로필 이미지" width="32" height="32" class="rounded-circle">
+            <img src="/img/default_profile_icon.png" alt="프로필 이미지" width="32" height="32" class="rounded-circle">
           </a>
           <ul class="dropdown-menu text-small">
             <li>
