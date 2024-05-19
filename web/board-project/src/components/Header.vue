@@ -4,17 +4,17 @@
       <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
         <div class="navbar navbar-dark bg-dark shadow-sm">
           <div class="container">
-            <router-link to="/" class="navbar-brand d-flex align-items-center">
+            <div @click="goHome" class="navbar-brand d-flex align-items-center">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewBox="0 0 24 24">
                 <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
                 <circle cx="12" cy="13" r="4"/></svg>
               <strong>Gallery</strong>
-            </router-link>
+            </div>
           </div>
         </div>
 
-        <form class="search col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
-          <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+        <form class="search col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" @submit.prevent="submit">
+          <input type="search" v-model="searchText" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
         </form>
 
         <div class="text-end">
@@ -58,7 +58,7 @@
 import store from '../scripts/store'
 import router from '../scripts/router'
 import axios from 'axios'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 export default {
   name: 'Header',
@@ -72,9 +72,36 @@ export default {
       });
     }
 
+    const searchText = ref('');
+
+    const submit = () => {
+      store.dispatch('setSearchText', searchText.value);
+
+      if(searchText.value) {
+        axios.get(`/api/items/search?name=${encodeURIComponent(searchText.value)}`).then((res) => {
+          console.log("검색 결과: ", res.data);
+          store.dispatch('setSearchResults', res.data);
+          router.push({path: "/"});
+        }).catch((error) => {
+          console.error("검색 중 오류 발생: ", error);
+        });
+      } else {
+        store.dispatch('setSearchResults', []);
+        router.push({path: "/"});
+      }
+    }
+
+    const goHome = () => {
+      store.dispatch('setSearchText', "");
+      router.push({path: "/"});
+    }
+
     return {
       isAuthenticated,
-      logout
+      logout,
+      searchText,
+      submit,
+      goHome
     }
   }
 }
@@ -88,6 +115,10 @@ header ul li a {
 header .cart {
   margin-left: auto;
   color: #fff
+}
+
+.navbar-brand {
+  cursor: pointer;
 }
 
 .search input[type="search"] {
