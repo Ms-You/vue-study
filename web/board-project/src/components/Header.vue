@@ -1,40 +1,54 @@
 <template>
-  <header data-bs-theme="dark">
-    <div class="collapse bg-dark" id="navbarHeader">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-4 py-4">
-            <h4 class="text-white">사이트맵</h4>
-            <ul class="list-unstyled">
-              <li>
-                <router-link to="/" class="text-white">메인 화면</router-link>
-              </li>
-              <li v-if="isAuthenticated">
-                <router-link to="/orders" class="text-white">주문 내역</router-link>
-              </li>
-              <li>
-                <router-link to="/login" class="text-white" v-if="!isAuthenticated">로그인</router-link>
-                <a to="/login" class="text-white" @click="logout" v-else>로그아웃</a>
-              </li>
-            </ul>
+  <header class="p-3 text-bg-dark">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+        <div class="navbar navbar-dark bg-dark shadow-sm">
+          <div class="container">
+            <div @click="goHome" class="navbar-brand d-flex align-items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewBox="0 0 24 24">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/></svg>
+              <strong>Gallery</strong>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="navbar navbar-dark bg-dark shadow-sm">
-      <div class="container">
-        <router-link to="/" class="navbar-brand d-flex align-items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="me-2" viewBox="0 0 24 24">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-            <circle cx="12" cy="13" r="4"/></svg>
-          <strong>Gallery</strong>
-        </router-link>
-        <router-link to="/cart" class="cart btn" v-if="isAuthenticated">
-          <i class="fa fa-shopping-cart" aria-hidden="true"></i>
-        </router-link>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+
+        <form class="search col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search" @submit.prevent="submit">
+          <input type="search" v-model="searchText" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+        </form>
+
+        <div class="text-end">
+          <router-link to="/login" class="btn btn-outline-light me-2" v-if="!isAuthenticated">Login</router-link>
+        </div>
+
+        <div class="dropdown text-end" v-if="isAuthenticated">
+          <a href="#" class="d-block link-body-emphasis text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="/img/default_profile_icon.png" alt="프로필 이미지" width="32" height="32" class="rounded-circle">
+          </a>
+          <ul class="dropdown-menu text-small">
+            <li>
+              <a class="dropdown-item" href="#">Profile
+                <i class="bx bxs-face"></i>
+              </a>
+            </li>
+            <li>
+              <router-link to="/orders" class="dropdown-item">Orders
+                <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+              </router-link>
+            </li>
+            <li>
+              <router-link to="/cart" class="dropdown-item">Cart
+                <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+              </router-link>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+              <a to="/login" class="dropdown-item" @click="logout">Sign out
+                <i class="bx bxs-log-out-circle"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </header>
@@ -44,7 +58,7 @@
 import store from '../scripts/store'
 import router from '../scripts/router'
 import axios from 'axios'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 
 export default {
   name: 'Header',
@@ -58,9 +72,36 @@ export default {
       });
     }
 
+    const searchText = ref('');
+
+    const submit = () => {
+      store.dispatch('setSearchText', searchText.value);
+
+      if(searchText.value) {
+        axios.get(`/api/items/search?name=${encodeURIComponent(searchText.value)}`).then((res) => {
+          console.log("검색 결과: ", res.data);
+          store.dispatch('setSearchResults', res.data);
+          router.push({path: "/"});
+        }).catch((error) => {
+          console.error("검색 중 오류 발생: ", error);
+        });
+      } else {
+        store.dispatch('setSearchResults', []);
+        router.push({path: "/"});
+      }
+    }
+
+    const goHome = () => {
+      store.dispatch('setSearchText', "");
+      router.push({path: "/"});
+    }
+
     return {
       isAuthenticated,
-      logout
+      logout,
+      searchText,
+      submit,
+      goHome
     }
   }
 }
@@ -71,8 +112,21 @@ header ul li a {
   cursor: pointer;
 }
 
-header .navbar .cart {
+header .cart {
   margin-left: auto;
   color: #fff
+}
+
+.navbar-brand {
+  cursor: pointer;
+}
+
+.search input[type="search"] {
+  width: 25%;
+  margin-left: auto;
+}
+
+.search {
+  flex-grow: 1;
 }
 </style>

@@ -10,7 +10,7 @@
       </p>
 
       <div class="d-flex justify-content-between align-items-center">
-        <button class="btn btn-primary" @click="addToCart(item.id)">
+        <button class="btn btn-primary" @click="addToCart(item.id)" v-if="isAuthenticated">
           <i class="fa fa-shopping-cart" aria-hidden="true"></i>
         </button>
         <small class="price text-muted">
@@ -27,6 +27,8 @@
 <script>
 import lib from '../scripts/lib'
 import axios from '../axios'
+import store from '../scripts/store'
+import { computed } from 'vue'
 
   export default {
     name: 'Card',
@@ -34,6 +36,8 @@ import axios from '../axios'
       item: Object
     },
     setup() {
+      const isAuthenticated = computed(() => store.state.isAuthenticated);
+
       const addToCart = (itemId) => {
         axios.post(`/member/cart/item/${itemId}`).then(() => {
           console.log('success');
@@ -42,6 +46,7 @@ import axios from '../axios'
 
       return {
         lib,
+        isAuthenticated,
         addToCart
       }
     }

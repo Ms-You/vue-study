@@ -3,7 +3,7 @@
     <div class="album py-5 bg-body-tertiary">
       <div class="container">
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-          <div class="col" v-for="(item, idx) in state.items" :key="idx">
+          <div class="col" v-for="(item, idx) in displayItems" :key="idx">
             <Card :item="item" />
           </div>
         </div>
@@ -14,7 +14,8 @@
 <script>
 import Card from '../components/Card.vue'
 import axios from 'axios'
-import { reactive } from 'vue'
+import { computed, onMounted, reactive } from 'vue'
+import { useStore } from 'vuex';
 
 export default {
   name: "Home",
@@ -22,21 +23,33 @@ export default {
     Card,
   },
   setup() {
+    const store = useStore();
     const state = reactive({
       items: []
     })
 
-    // axios.get("/api/items").then((res) => {
-    //   state.items = res.data;
-    // }) 아래와 같이 사용 가능
+    const searchText = computed(() => store.state.searchText);
+    const searchResults = computed(() => store.state.searchResults);
 
-    axios.get("/api/items").then(({data}) => {
-      console.log(data);
-      state.items = data;
+    onMounted(() => {
+      if(!searchText.value) {
+        axios.get("/api/items").then(({data}) => {
+          console.log(data);
+          state.items = data;
+        }).catch((error) => {
+          console.error("아이템 목록 불러오기 중 오류 발생: ", error);
+        })
+      }
     })
+
+    const displayItems = computed(() => {
+      return searchText.value ? searchResults.value : state.items;
+    })
+
 
     return {
       state,
+      displayItems,
     }
   }
 }
